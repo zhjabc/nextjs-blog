@@ -3,19 +3,281 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background-start: #F8FAFC;
+  --background-end: #F1F5F9;
+  --text-primary: #1E293B;
+  --text-secondary: #64748B;
+  --nav-bg: rgba(255, 255, 255, 0.9);
+  --card-bg: rgba(255, 255, 255, 0.95);
+  --card-border: rgba(0, 0, 0, 0.1);
+  --hover-bg: rgba(0, 0, 0, 0.05);
+  --blur-bg: rgba(255, 255, 255, 0.9);
+  --gradient-opacity: 0.3;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root.dark {
+  --background-start: #0F172A;
+  --background-end: #1E293B;
+  --text-primary: #E2E8F0;
+  --text-secondary: #94A3B8;
+  --nav-bg: rgba(0, 0, 0, 0.2);
+  --card-bg: rgba(255, 255, 255, 0.02);
+  --card-border: rgba(255, 255, 255, 0.1);
+  --hover-bg: rgba(255, 255, 255, 0.05);
+  --blur-bg: rgba(0, 0, 0, 0.2);
+  --gradient-opacity: 1;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--text-primary);
+  background: linear-gradient(to bottom, var(--background-start), var(--background-end));
+  min-height: 100vh;
+  overflow-x: hidden;
+  margin: 0 auto;
+  max-width: 100vw;
+  padding-right: calc(100vw - 100%);
 }
+
+.glass-effect {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  backdrop-filter: blur(8px);
+  border-radius: 0.5rem;
+}
+
+/* 只在需要模糊效果的地方使用 */
+.blur-backdrop {
+  backdrop-filter: blur(8px);
+}
+
+.tech-card {
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+}
+
+.tech-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* 添加动画延迟类 */
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+@layer utilities {
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+  .animation-delay-400 {
+    animation-delay: 400ms;
+  }
+  .animation-delay-600 {
+    animation-delay: 600ms;
+  }
+  .animation-delay-800 {
+    animation-delay: 800ms;
+  }
+}
+
+/* 背景动画 */
+@keyframes grid-fade {
+  0% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.1;
+  }
+  100% {
+    opacity: 0.2;
+  }
+}
+
+.bg-grid-pattern {
+  background-size: 40px 40px;
+  animation: grid-fade 8s ease-in-out infinite;
+}
+
+/* 渐变动画 */
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.gradient-animate {
+  background-size: 200% 200%;
+  animation: gradient-shift 15s ease infinite;
+}
+
+/* 光晕效果 */
+.glow {
+  position: relative;
+}
+
+.glow::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+  filter: blur(15px);
+  z-index: -1;
+  opacity: 0.15;
+  transition: opacity 0.3s ease;
+}
+
+.glow:hover::after {
+  opacity: 0.3;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background-end);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--card-border);
+  border-radius: 5px;
+  border: 2px solid var(--background-end);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--hover-bg);
+}
+
+/* 防止滚动条导致布局偏移 */
+html {
+  scrollbar-gutter: stable;
+}
+
+/* 确保内容区域最小高度 */
+main {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 平滑滚动 */
+html {
+  scroll-behavior: smooth;
+}
+
+/* 导航栏 */
+.nav-blur {
+  background: var(--nav-bg);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--card-border);
+}
+
+/* 悬浮效果 */
+.hover-effect:hover {
+  background: var(--hover-bg);
+}
+
+/* 文本颜色 */
+.text-secondary {
+  color: var(--text-secondary);
+}
+
+/* 添加平滑过渡 */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+/* 优化滚动行为 */
+html {
+  scroll-behavior: smooth;
+}
+
+/* 确保内容区域最小高度 */
+.min-h-screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 优化加载状态 */
+.loading-fade {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* 确保主要内容容器的宽度正确 */
+.max-w-5xl {
+  max-width: min(100%, 64rem);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+}
+
+/* 文章卡片悬浮效果 */
+.article-card {
+  transition: all 0.3s ease;
+}
+
+.article-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* 分类标签 */
+.category-tag {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* 修改博客页面的文本样式 */
+.blog-description {
+  @apply text-gray-600 dark:text-gray-400;
+}
+
+.post-meta {
+  @apply text-gray-600 dark:text-gray-400;
+}
+
+/* 博客页面头部背景 */
+.blog-header-bg {
+  position: relative;
+}
+
+.blog-header-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    var(--background-start) 0%,
+    var(--background-start) 60%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+/* 优化滚动行为 */
+html {
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
+  overflow-y: auto;
+}
+
+/* 确保内容区域最小高度 */
+.min-h-screen {
+  min-height: 100vh;
+}
+
+/* 移除之前的 sticky 相关样式 */
