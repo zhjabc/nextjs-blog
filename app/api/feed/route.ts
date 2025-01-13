@@ -26,11 +26,11 @@ export async function GET() {
 
   posts.forEach(post => {
     feed.addItem({
-      title: post.data.title,
+      title: post.title,
       id: `https://your-domain.com/posts/${post.slug}`,
       link: `https://your-domain.com/posts/${post.slug}`,
-      description: post.data.description,
-      content: post.content,
+      description: post.description,
+      content: post.description,
       author: [
         {
           name: "ZHJ",
@@ -38,9 +38,8 @@ export async function GET() {
           link: "https://your-domain.com/about"
         }
       ],
-      date: new Date(post.data.date),
-      image: post.data.image,
-      published: new Date(post.data.date),
+      date: new Date(post.date),
+      published: new Date(post.date),
       copyright: "All rights reserved 2024"
     });
   });
