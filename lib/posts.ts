@@ -4,6 +4,20 @@ import matter from 'gray-matter'
 
 const postsDirectory = path.join(process.cwd(), 'posts')
 
+interface PostData {
+  title: string
+  date: string
+  category: string
+  description: string
+  image?: string
+}
+
+export interface Post {
+  slug: string
+  data: PostData
+  content: string
+}
+
 export interface PostMetadata {
   title: string
   date: string
@@ -12,7 +26,7 @@ export interface PostMetadata {
   slug: string
 }
 
-export function getAllPosts() {
+export function getAllPosts(): PostMetadata[] {
   if (!fs.existsSync(postsDirectory)) {
     fs.mkdirSync(postsDirectory, { recursive: true })
     return []
@@ -34,7 +48,10 @@ export function getAllPosts() {
       
       return {
         slug,
-        ...(data as Omit<PostMetadata, 'slug'>),
+        title: data.title,
+        date: data.date,
+        category: data.category,
+        description: data.description,
       }
     })
 
@@ -44,43 +61,41 @@ export function getAllPosts() {
   })
 }
 
-export function getAllCategories() {
+export function getPostBySlug(slug: string): Post | undefined {
+  try {
+    const fullPath = path.join(postsDirectory, `${slug}.mdx`)
+    const fileContents = fs.readFileSync(fullPath, 'utf8')
+    const { data, content } = matter(fileContents)
+    
+    return {
+      slug,
+      data: data as PostData,
+      content,
+    }
+  } catch (error) {
+    console.error(`Error reading post ${slug}:`, error)
+    return undefined
+  }
+}
+
+export function getAllCategories(): string[] {
   const posts = getAllPosts()
   const categories = new Set(posts.map(post => post.category))
   return Array.from(categories)
 }
 
-export function getPostsByCategory(category: string | null) {
+export function getPostsByCategory(category: string | null): PostMetadata[] {
   const posts = getAllPosts()
   if (!category) return posts
   return posts.filter(post => post.category === category)
 }
 
 export function getPostStats(content: string) {
-  const wordCount = content.trim().split(/\s+/).length;
-  const readingTime = Math.ceil(wordCount / 200); // 假设阅读速度为每分钟200字
+  const wordCount = content.trim().split(/\s+/).length
+  const readingTime = Math.ceil(wordCount / 200) // 假设阅读速度为每分钟200字
   
   return {
     wordCount,
     readingTime
-  };
-}
-
-export function getPostBySlug(slug: string) {
-  try {
-    const filePath = path.join(process.cwd(), 'posts', `${slug}.mdx`)
-    const fileContent = fs.readFileSync(filePath, 'utf8')
-    const { data, content } = matter(fileContent)
-    
-    return {
-      data: {
-        ...data,
-        slug,
-      },
-      content,
-    }
-  } catch (error) {
-    console.error(`Error reading post ${slug}:`, error)
-    return null
   }
 } 
