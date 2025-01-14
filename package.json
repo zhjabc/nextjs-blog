@@ -16,6 +16,7 @@
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "autoprefixer": "^10.4.16",
+    "critters": "^0.0.25",
     "feed": "^4.2.2",
     "framer-motion": "^10.18.0",
     "gray-matter": "^4.0.3",
