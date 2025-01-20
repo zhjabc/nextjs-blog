@@ -1,10 +1,10 @@
 import PageLayout from '@/app/components/PageLayout'
 import Image from 'next/image'
-import { getGithubProfile, getGithubRepos } from '@/lib/github'
+import { getGithubProfile, getGithubRepos, type GithubProfile, type GithubRepo } from '@/lib/github'
 
 export default async function Home() {
-  let profile;
-  let repos;
+  let profile: GithubProfile;
+  let repos: GithubRepo[];
 
   try {
     [profile, repos] = await Promise.all([
