@@ -3,8 +3,30 @@ import Image from 'next/image'
 import { getGithubProfile, getGithubRepos } from '@/lib/github'
 
 export default async function Home() {
-  const profile = await getGithubProfile()
-  const repos = await getGithubRepos()
+  let profile;
+  let repos;
+
+  try {
+    [profile, repos] = await Promise.all([
+      getGithubProfile(),
+      getGithubRepos()
+    ]);
+  } catch (error) {
+    console.error('Failed to fetch GitHub data:', error);
+    // 提供默认值
+    profile = {
+      name: process.env.GITHUB_USERNAME || 'Developer',
+      bio: '',
+      avatar_url: '',
+      html_url: '',
+      public_repos: 0,
+      followers: 0,
+      following: 0,
+      location: '',
+      blog: ''
+    };
+    repos = [];
+  }
 
   const languageColors: { [key: string]: string } = {
     TypeScript: 'bg-blue-500',
@@ -46,7 +68,7 @@ export default async function Home() {
                 </div>
                 <h1 className="text-4xl font-bold mb-4">
                   你好, 我是 <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-                    {profile.name || process.env.GITHUB_USERNAME || 'ZHJ'}
+                    {profile.name}
                   </span>
                 </h1>
                 <p className="text-gray-300 mb-6 text-lg">

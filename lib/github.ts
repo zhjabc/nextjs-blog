@@ -28,32 +28,59 @@ export interface GithubRepo {
 }
 
 export async function getGithubProfile(): Promise<GithubProfile> {
-  const res = await fetch(`${GITHUB_API}/users/${process.env.GITHUB_USERNAME}`, {
-    headers: {
-      Authorization: `token ${process.env.GITHUB_TOKEN}`,
-    },
-    next: { revalidate: 3600 }
-  })
-  
-  if (!res.ok) throw new Error('Failed to fetch GitHub profile')
-  return res.json()
+  const username = process.env.GITHUB_USERNAME
+  const token = process.env.GITHUB_TOKEN
+
+  if (!username || !token) {
+    throw new Error('GitHub configuration missing. Please set GITHUB_USERNAME and GITHUB_TOKEN in Vercel environment variables.')
+  }
+
+  try {
+    const res = await fetch(`${GITHUB_API}/users/${username}`, {
+      headers: {
+        Authorization: `token ${token}`,
+      },
+      next: { revalidate: 3600 }
+    })
+    
+    if (!res.ok) {
+      throw new Error(`GitHub API responded with status ${res.status}`)
+    }
+    
+    return res.json()
+  } catch (error) {
+    console.error('Error fetching GitHub profile:', error)
+    throw new Error('Failed to fetch GitHub profile')
+  }
 }
 
 export async function getGithubRepos(): Promise<GithubRepo[]> {
-  const res = await fetch(
-    `${GITHUB_API}/users/${process.env.GITHUB_USERNAME}/repos?sort=updated&per_page=30`, 
-    {
-      headers: {
-        Authorization: `token ${process.env.GITHUB_TOKEN}`,
-      },
-      next: { revalidate: 3600 }
+  const username = process.env.GITHUB_USERNAME
+  const token = process.env.GITHUB_TOKEN
+
+  if (!username || !token) {
+    throw new Error('GitHub configuration missing. Please set GITHUB_USERNAME and GITHUB_TOKEN in Vercel environment variables.')
+  }
+
+  try {
+    const res = await fetch(
+      `${GITHUB_API}/users/${username}/repos?sort=updated&per_page=30`, 
+      {
+        headers: {
+          Authorization: `token ${token}`,
+        },
+        next: { revalidate: 3600 }
+      }
+    )
+
+    if (!res.ok) {
+      throw new Error(`GitHub API responded with status ${res.status}`)
     }
-  )
-  
-  if (!res.ok) throw new Error('Failed to fetch GitHub repos')
-  const repos = await res.json()
-  
-  return repos
-    .filter((repo: GithubRepo) => !repo.fork)
-    .slice(0, 6)
-} 
+
+    const repos = await res.json()
+    return repos.filter((repo: GithubRepo) => !repo.fork).slice(0, 6)
+  } catch (error) {
+    console.error('Error fetching GitHub repos:', error)
+    throw new Error('Failed to fetch GitHub repositories')
+  }
+}
